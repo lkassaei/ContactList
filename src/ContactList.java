@@ -34,7 +34,7 @@ public class ContactList {
     // Helper method to prompt user input for adding contact
     public void addContactHelper() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Selcect a type of contact to add:");
+        System.out.println("Select a type of contact to add:");
         System.out.println("1. Student");
         System.out.println("2. Athlete");
         int contactChoice = scanner.nextInt();
@@ -80,45 +80,85 @@ public class ContactList {
     public void sort(int sortBy) {
         // Sort alphabetically by first name
         if (sortBy == 0) {
-            Person temp;
-            for (int i = 0; i < contacts.size(); i++) {
-                for (int j = 0; j < contacts.size() - 1 - i; j++) {
-                    // If the first name of the current contact is later in the alphabet than the next one, swap them
-                    if (contacts.get(j).getFirstName().compareTo(contacts.get(j + 1).getFirstName()) > 0) {
-                        temp = contacts.get(j);
-                        contacts.set(j, contacts.get(j + 1));
-                        contacts.set(j + 1, temp);
-                    }
-                }
-            }
+            sortContactsByFirstName();
         }
+        // Sort alphabetically by last name
         else if (sortBy == 1) {
-            // Sort alphabetically by last name
-            Person temp;
-            for (int i = 0; i < contacts.size(); i++) {
-                for (int j = 0; j < contacts.size() - 1 - i; j++) {
-                    // If the last name of the current contact is later in the alphabet than the next one, swap them
-                    if (contacts.get(j).getLastName().compareTo(contacts.get(j + 1).getLastName()) > 0) {
-                        temp = contacts.get(j);
-                        contacts.set(j, contacts.get(j + 1));
-                        contacts.set(j + 1, temp);
-                    }
-                }
-            }
+            sortContactsByLastName();
         }
         else if (sortBy == 2) {
             // Sort by phone number
-            Person temp;
-            for (int i = 0; i < contacts.size(); i++) {
-                for (int j = 0; j < contacts.size() - 1 - i; j++) {
-                    // If the current contact phone number is bigger than the next one, swap them
-                    if (contacts.get(j).getPhoneNumber().compareTo(contacts.get(j + 1).getPhoneNumber()) > 0) {
-                        temp = contacts.get(j);
-                        contacts.set(j, contacts.get(j + 1));
-                        contacts.set(j + 1, temp);
-                    }
+            sortContactsByPhoneNumber();
+        }
+    }
+
+    public void sortContactsByFirstName() {
+        Person temp;
+        for (int i = 0; i < contacts.size(); i++) {
+            for (int j = 0; j < contacts.size() - 1 - i; j++) {
+                // If the first name of the current contact is later in the alphabet than the next one, swap them
+                if (contacts.get(j).getFirstName().compareTo(contacts.get(j + 1).getFirstName()) > 0) {
+                    temp = contacts.get(j);
+                    contacts.set(j, contacts.get(j + 1));
+                    contacts.set(j + 1, temp);
                 }
             }
+        }
+    }
+
+    public void sortContactsByLastName() {
+        Person temp;
+        for (int i = 0; i < contacts.size(); i++) {
+            for (int j = 0; j < contacts.size() - 1 - i; j++) {
+                // If the last name of the current contact is later in the alphabet than the next one, swap them
+                if (contacts.get(j).getLastName().compareTo(contacts.get(j + 1).getLastName()) > 0) {
+                    temp = contacts.get(j);
+                    contacts.set(j, contacts.get(j + 1));
+                    contacts.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
+    public void sortContactsByPhoneNumber() {
+        Person temp;
+        for (int i = 0; i < contacts.size(); i++) {
+            for (int j = 0; j < contacts.size() - 1 - i; j++) {
+                // If the current contact phone number is bigger than the next one, swap them
+                if (contacts.get(j).getPhoneNumber().compareTo(contacts.get(j + 1).getPhoneNumber()) > 0) {
+                    temp = contacts.get(j);
+                    contacts.set(j, contacts.get(j + 1));
+                    contacts.set(j + 1, temp);
+                }
+            }
+        }
+    }
+
+    public void searchContactHelper(String type) {
+        // Prompt user based on type they are searching for
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter a " + type + ":");
+        String input = scanner.nextLine();
+        Person foundContact = null;
+
+        // Search by specified attribute
+        if (type.equals("name")) {
+            foundContact = searchByFirstName(input);
+        }
+        if (type.equals("last name")) {
+            foundContact = searchByLastName(input);
+        }
+        if (type.equals("phone number")) {
+            foundContact = searchByPhoneNumber(input);
+        }
+
+        // If person is found, then print their info
+        if (foundContact != null) {
+            System.out.println(foundContact);
+        }
+        // Else print that whatever the user searched for is not in the contact list
+        else {
+            System.out.println(input + " is not in the list.");
         }
     }
 
@@ -176,16 +216,9 @@ public class ContactList {
         }
     }
 
-    public void test() {
-        addContact(1, "Lily", "Kassaei", "1", 10, "tennis");
-        addContact(1, "Sara", "Kassaei", "2", 10, "golf");
-        addContact(2, "Baba", "Kass", "3", 100, "weights");
-    }
-
     // Method to print the menu
     public void printMenu() {
         System.out.println("Menu:");
-        System.out.println("-1: Test");
         System.out.println("1: Add Contact");
         System.out.println("2: List all contacts by First Name");
         System.out.println("3: List all contacts by Last Name");
@@ -205,91 +238,61 @@ public class ContactList {
         while(!wantsExit) {
             // Print the menu
             printMenu();
+            // Have input be always read as a string to handle invalid integers and strings
+            String choice = scanner.nextLine();
 
-            int choice = scanner.nextInt();
+            switch(choice) {
+                // Exit if 0 has been selected
+                case "0":
+                    wantsExit = true;
+                    break;
 
-            // Exit if 0 has been selected
-            if (choice == 0) {
-                wantsExit = true;
-            }
+                // Add a contact if 1 has been selected
+                case "1":
+                    addContactHelper();
+                    break;
 
-            // Add a contact
-            else if (choice == 1) {
-                addContactHelper();
-            }
+                // Sort by first name and print sorted list of contacts if 2 has been selected
+                case "2":
+                    sort(0);
+                    printContacts();
+                    break;
 
-            // Sort by first name and print sorted list of contacts
-            else if (choice == 2) {
-                sort(0);
-                printContacts();
-            }
+                // Sort by last name and print sorted list of contacts if 3 has been selected
+                case "3":
+                    sort(1);
+                    printContacts();
+                    break;
 
-            // Sort by last name and print sorted list of contacts
-            else if (choice == 3) {
-                sort(1);
-                printContacts();
-            }
+                // Sort by phone number and print sorted list of contacts if 4 has been selected
+                case "4":
+                    sort(2);
+                    printContacts();
+                    break;
 
-            // Sort by phone number and print sorted list of contacts
-            else if (choice == 4) {
-                sort(2);
-                printContacts();
-            }
+                // List all students if 5 has been selected
+                case "5":
+                    listStudents();
+                    break;
 
-            // List all students
-            else if (choice == 5) {
-                listStudents();
-            }
+                // Search by first name if 6 has been selected
+                case "6":
+                    searchContactHelper("name");
+                    break;
 
-            // Search by first name
-            else if (choice == 6) {
-                System.out.print("Enter a name:");
-                scanner.nextLine(); // Move scanner to next line so it can read next input
-                String firstName = scanner.nextLine();
-                // If a contact with matching first name has been found, print their info
-                if (searchByFirstName(firstName) != null) {
-                    System.out.print(searchByFirstName(firstName));
-                }
-                // If no contact with matching first name has been found then specify they are not in the list
-                else {
-                    System.out.print(firstName + " is not in the list.\n");
-                }
-            }
+                // Search by last name if 7 has been selected
+                case "7":
+                    searchContactHelper("last name");
+                    break;
 
-            // Search by last name
-            else if (choice == 7) {
-                System.out.print("Enter a last name:");
-                scanner.nextLine(); // Move scanner to next line so it can read next input
-                String lastName = scanner.nextLine();
-                // If a contact with matching last name has been found, print their info
-                if (searchByLastName(lastName) != null) {
-                    System.out.print(searchByLastName(lastName));
-                }
-                // If no contact with matching last name has been found then specify they are not in the list
-                else {
-                    System.out.print(lastName + " is not in the list.\n");
-                }
-            }
+                // Search by phone number if 8 has been selected
+                case "8":
+                    searchContactHelper("phone number");
+                    break;
 
-            // Search by phone number
-            else if (choice == 8) {
-                System.out.print("Enter a phone number:");
-                scanner.nextLine(); // Move scanner to next line so it can read next input
-                String phoneNumber = scanner.nextLine();
-                // If a contact with matching phone number has been found, print their info
-                if (searchByPhoneNumber(phoneNumber) != null) {
-                    System.out.print(searchByPhoneNumber(phoneNumber));
-                }
-                // If no contact with matching phone number has been found then specify they are not in the list
-                else {
-                    System.out.print(phoneNumber + " is not in the list.\n");
-                }
-            }
-            else if (choice == -1) {
-                test();
-            }
-            else {
-                System.out.println("Invalid choice.\n");
+                // Default case to handle invalid input
+                default:
+                    System.out.println("Invalid choice.");
             }
         }
     }

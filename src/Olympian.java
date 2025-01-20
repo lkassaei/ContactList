@@ -16,6 +16,6 @@ public class Olympian extends Person{
 
     // An overridden to-string method that combines Person's to-string with the sport of the Olympian
     public String toString() {
-        return super.toString() + " Sport: " + this.sport;
+        return super.toString() + " " + this.sport;
     }
 }
